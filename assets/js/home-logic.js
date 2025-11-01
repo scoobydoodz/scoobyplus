@@ -336,13 +336,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     let bestRatedItemForBanner = null;
     let highestRating = 0;
     
-    // Adiciona seção "Continuar Assistindo" no mobile
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-        const continueSection = await createContinueWatchingSection();
-        if (continueSection) {
-            contentContainer.appendChild(continueSection);
-        }
+    // Adiciona seção "Continuar Assistindo" (desktop e mobile)
+    const continueSection = await createContinueWatchingSection();
+    if (continueSection) {
+        contentContainer.appendChild(continueSection);
     }
     
     try {
