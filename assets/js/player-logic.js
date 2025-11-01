@@ -166,14 +166,32 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', () => {
             const wrapper = document.querySelector('.dailymotion-embed-wrapper');
-            if (wrapper) {
-                if (wrapper.requestFullscreen) {
-                    wrapper.requestFullscreen();
-                } else if (wrapper.webkitRequestFullscreen) {
-                    wrapper.webkitRequestFullscreen();
-                } else if (wrapper.mozRequestFullScreen) {
-                    wrapper.mozRequestFullScreen();
+            const iframe = document.querySelector('#dailymotion-player iframe');
+            
+            // Tenta fullscreen no iframe primeiro (mobile)
+            if (iframe) {
+                if (iframe.requestFullscreen) {
+                    iframe.requestFullscreen();
+                } else if (iframe.webkitRequestFullscreen) {
+                    iframe.webkitRequestFullscreen();
+                } else if (iframe.mozRequestFullScreen) {
+                    iframe.mozRequestFullScreen();
+                } else if (iframe.webkitEnterFullscreen) {
+                    iframe.webkitEnterFullscreen();
                 }
+            }
+            
+            // Fallback para o wrapper
+            if (wrapper && !document.fullscreenElement) {
+                setTimeout(() => {
+                    if (wrapper.requestFullscreen) {
+                        wrapper.requestFullscreen();
+                    } else if (wrapper.webkitRequestFullscreen) {
+                        wrapper.webkitRequestFullscreen();
+                    } else if (wrapper.mozRequestFullScreen) {
+                        wrapper.mozRequestFullScreen();
+                    }
+                }, 100);
             }
         });
     }
