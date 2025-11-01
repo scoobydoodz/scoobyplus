@@ -213,6 +213,86 @@ function updateCarouselButtons(categoryKey) {
     nextBtn.disabled = currentScroll >= maxScroll;
 }
 
+// Função para criar seção "Continuar Assistindo"
+async function createContinueWatchingSection() {
+    const continueItems = [];
+    
+    // Busca todos os itens salvos no localStorage
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('lastWatched_')) {
+            const seriesId = key.replace('lastWatched_', '');
+            const progress = JSON.parse(localStorage.getItem(key));
+            
+            // Busca dados da série
+            for (const [categoryKey, categoryData] of Object.entries(CONTENT_CATEGORIES)) {
+                if (categoryData.items[seriesId]) {
+                    const seriesData = categoryData.items[seriesId];
+                    
+                    // Busca poster do TMDB se for ID válido
+                    let posterUrl = seriesData.poster_path || 'https://via.placeholder.com/342x513/1e1e1e/FFFFFF?text=SEM+CAPA';
+                    const isValidTmdbId = !isNaN(Number(seriesId)) && Number(seriesId) < 900000;
+                    
+                    if (isValidTmdbId && !seriesData.poster_path) {
+                        try {
+                            const contentType = categoryKey === 'series' ? 'tv' : 'movie';
+                            const tmdbData = await fetchTmdbData(`${contentType}/${seriesId}`);
+                            if (tmdbData && tmdbData.poster_path) {
+                                posterUrl = `https://image.tmdb.org/t/p/w342${tmdbData.poster_path}`;
+                            }
+                        } catch (error) {
+                            console.log('Erro ao buscar poster TMDB:', error);
+                        }
+                    }
+                    
+                    continueItems.push({
+                        id: seriesId,
+                        title: seriesData.title || 'Título não disponível',
+                        poster: posterUrl,
+                        season: progress.t || 1,
+                        episode: progress.e || 1,
+                        category: categoryKey
+                    });
+                    break;
+                }
+            }
+        }
+    }
+    
+    if (continueItems.length === 0) return null;
+    
+    const section = document.createElement('div');
+    section.className = 'category-section';
+    section.innerHTML = `
+        <div class="category-header">
+            <h2>Continuar Assistindo</h2>
+        </div>
+        <div class="continue-watching-grid" id="continue-watching-container"></div>
+    `;
+    
+    const container = section.querySelector('#continue-watching-container');
+    
+    continueItems.slice(0, 6).forEach(item => {
+        const card = document.createElement('a');
+        card.className = 'continue-card';
+        card.href = item.category === 'series' 
+            ? `series/player.html?series=${item.id}&t=${item.season}&e=${item.episode}`
+            : `series/series-page.html?series=${item.id}`;
+        
+        card.innerHTML = `
+            <img src="${item.poster}" alt="${item.title}">
+            <div class="continue-info">
+                <h4>${item.title}</h4>
+                <p>T${item.season} E${item.episode}</p>
+            </div>
+        `;
+        
+        container.appendChild(card);
+    });
+    
+    return section;
+}
+
 // Função para aguardar carregamento das variáveis
 function waitForData() {
     return new Promise((resolve) => {
@@ -255,6 +335,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     contentContainer.innerHTML = '';
     let bestRatedItemForBanner = null;
     let highestRating = 0;
+    
+    // Adiciona seção "Continuar Assistindo" no mobile
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+        const continueSection = await createContinueWatchingSection();
+        if (continueSection) {
+            contentContainer.appendChild(continueSection);
+        }
+    }
     
     try {
         // Processa cada categoria
