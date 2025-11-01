@@ -75,11 +75,11 @@ document.addEventListener('DOMContentLoaded', () => {
             frameborder="0" 
             width="100%" 
             height="100%" 
-            src="https://www.dailymotion.com/embed/video/${videoUrl}?autoplay=1&ui-components=controls&fullscreen=1" 
+            src="https://www.dailymotion.com/embed/video/${videoUrl}" 
             allowfullscreen 
             webkitallowfullscreen 
             mozallowfullscreen 
-            allow="autoplay; fullscreen; picture-in-picture">
+            allow="fullscreen">
         </iframe>`;
     }
     document.getElementById('dailymotion-player').innerHTML = playerHtml;
@@ -161,42 +161,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const value = JSON.stringify({ t: currentSeason, e: currentEpisode });
     localStorage.setItem(key, value);
     
-    // Garantir que o fullscreen funcione
-    setTimeout(() => {
-        const iframe = document.querySelector('#dailymotion-player iframe');
-        if (iframe) {
-            // Força os atributos de fullscreen
-            iframe.setAttribute('allowfullscreen', 'true');
-            iframe.setAttribute('webkitallowfullscreen', 'true');
-            iframe.setAttribute('mozallowfullscreen', 'true');
-            
-            // Adiciona event listener para fullscreen
-            iframe.addEventListener('load', () => {
-                console.log('Player carregado - Fullscreen habilitado');
-            });
-        }
-    }, 1000);
+    // Botão de fullscreen customizado
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    if (fullscreenBtn) {
+        fullscreenBtn.addEventListener('click', () => {
+            const wrapper = document.querySelector('.dailymotion-embed-wrapper');
+            if (wrapper) {
+                if (wrapper.requestFullscreen) {
+                    wrapper.requestFullscreen();
+                } else if (wrapper.webkitRequestFullscreen) {
+                    wrapper.webkitRequestFullscreen();
+                } else if (wrapper.mozRequestFullScreen) {
+                    wrapper.mozRequestFullScreen();
+                }
+            }
+        });
+    }
 });
 
-// Função para testar fullscreen manualmente
-function testFullscreen() {
-    const iframe = document.querySelector('#dailymotion-player iframe');
-    if (iframe && iframe.requestFullscreen) {
-        iframe.requestFullscreen();
-    } else if (iframe && iframe.webkitRequestFullscreen) {
-        iframe.webkitRequestFullscreen();
-    } else if (iframe && iframe.mozRequestFullScreen) {
-        iframe.mozRequestFullScreen();
-    }
-}
-
-// Adiciona botão de teste (apenas para debug)
-if (window.location.search.includes('debug=1')) {
-    setTimeout(() => {
-        const testBtn = document.createElement('button');
-        testBtn.textContent = 'Teste Fullscreen';
-        testBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;padding:10px;background:#ff9800;color:#000;border:none;border-radius:4px;cursor:pointer;';
-        testBtn.onclick = testFullscreen;
-        document.body.appendChild(testBtn);
-    }, 2000);
-}
