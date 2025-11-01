@@ -193,6 +193,7 @@ const CONTENT_CATEGORIES = {
             // O Novo Show do Scooby-Doo e Scooby-Loo (1983)
             "novo_show_scooby_loo": {
                 short_id: "novo_show_scooby_loo",
+                title: "O Novo Show do Scooby-Doo e Scooby-Loo",
                 release_year: 1983,
                 dailymotion_videos: {
                     "1_1": "k2qsE1nunt1nsGCWLbI",
@@ -574,6 +575,7 @@ const CONTENT_CATEGORIES = {
             // Velma (2023)
             "126725": {
                 short_id: "velma_2023",
+                title: "Velma",
                 dailymotion_videos: {
                     "1_1": "k6frl5orOI5phsCGnHW",
                     "1_2": "k1w6y7F7cKuAV3CXHCi",

@@ -1,5 +1,12 @@
 // assets/js/player-logic.js - Versão com TMDB
 
+// Cache para dados do TMDB
+const tmdbCache = {
+    series: new Map(),
+    episodes: new Map(),
+    seasons: new Map()
+};
+
 function sanitizeHtml(str) {
     if (!str) return '';
     const div = document.createElement('div');
@@ -11,12 +18,49 @@ async function fetchTmdbEpisode(seriesId, season, episode) {
     const isValidTmdbId = !isNaN(Number(seriesId)) && Number(seriesId) < 900000;
     if (!isValidTmdbId) return null;
     
+    const cacheKey = `${seriesId}_${season}_${episode}`;
+    if (tmdbCache.episodes.has(cacheKey)) {
+        return tmdbCache.episodes.get(cacheKey);
+    }
+    
     try {
         const response = await fetch(`${TMDB_BASE_URL}/tv/${seriesId}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}&language=pt-BR`);
-        if (!response.ok) return null;
-        return await response.json();
+        if (!response.ok) {
+            console.warn(`TMDB episódio não encontrado: T${season}E${episode} da série ${seriesId}`);
+            tmdbCache.episodes.set(cacheKey, null);
+            return null;
+        }
+        const data = await response.json();
+        tmdbCache.episodes.set(cacheKey, data);
+        return data;
     } catch (error) {
         console.error('Erro ao buscar episódio TMDB:', error);
+        tmdbCache.episodes.set(cacheKey, null);
+        return null;
+    }
+}
+
+async function fetchTmdbSeries(seriesId) {
+    const isValidTmdbId = !isNaN(Number(seriesId)) && Number(seriesId) < 900000;
+    if (!isValidTmdbId) return null;
+    
+    if (tmdbCache.series.has(seriesId)) {
+        return tmdbCache.series.get(seriesId);
+    }
+    
+    try {
+        const response = await fetch(`${TMDB_BASE_URL}/tv/${seriesId}?api_key=${TMDB_API_KEY}&language=pt-BR`);
+        if (!response.ok) {
+            console.warn(`TMDB série não encontrada: ${seriesId}`);
+            tmdbCache.series.set(seriesId, null);
+            return null;
+        }
+        const data = await response.json();
+        tmdbCache.series.set(seriesId, data);
+        return data;
+    } catch (error) {
+        console.error('Erro ao buscar série TMDB:', error);
+        tmdbCache.series.set(seriesId, null);
         return null;
     }
 }
@@ -25,12 +69,24 @@ async function fetchTmdbSeason(seriesId, season) {
     const isValidTmdbId = !isNaN(Number(seriesId)) && Number(seriesId) < 900000;
     if (!isValidTmdbId) return null;
     
+    const cacheKey = `${seriesId}_${season}`;
+    if (tmdbCache.seasons.has(cacheKey)) {
+        return tmdbCache.seasons.get(cacheKey);
+    }
+    
     try {
         const response = await fetch(`${TMDB_BASE_URL}/tv/${seriesId}/season/${season}?api_key=${TMDB_API_KEY}&language=pt-BR`);
-        if (!response.ok) return null;
-        return await response.json();
+        if (!response.ok) {
+            console.warn(`TMDB temporada não encontrada: T${season} da série ${seriesId}`);
+            tmdbCache.seasons.set(cacheKey, null);
+            return null;
+        }
+        const data = await response.json();
+        tmdbCache.seasons.set(cacheKey, data);
+        return data;
     } catch (error) {
         console.error('Erro ao buscar temporada TMDB:', error);
+        tmdbCache.seasons.set(cacheKey, null);
         return null;
     }
 }
@@ -60,6 +116,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
     
+    // Busca dados da série no TMDB se necessário
+    let seriesTitle = seriesData.title;
+    if (!seriesTitle) {
+        const tmdbSeries = await fetchTmdbSeries(seriesId);
+        if (tmdbSeries && tmdbSeries.name) {
+            seriesTitle = tmdbSeries.name;
+        } else {
+            seriesTitle = 'Série Scooby-Doo';
+        }
+    }
+    
     // Busca o vídeo do episódio atual
     const episodeKey = `${currentSeason}_${currentEpisode}`;
     let videoUrl = null;
@@ -75,6 +142,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tmdbEpisode = await fetchTmdbEpisode(seriesId, currentSeason, currentEpisode);
         if (tmdbEpisode && tmdbEpisode.name) {
             episodeTitle = tmdbEpisode.name;
+        } else {
+            // Fallback melhorado com nome da série
+            episodeTitle = `${seriesTitle} - Episódio ${currentEpisode}`;
         }
     }
     
@@ -84,7 +154,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     // Define título
-    const seriesTitle = seriesData.title || 'Série';
     const fullTitle = `${seriesTitle} | T${currentSeason} E${currentEpisode} - ${episodeTitle}`;
     document.getElementById('page-title').textContent = fullTitle;
     document.getElementById('episode-title').textContent = fullTitle;
@@ -152,7 +221,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     const tmdbEp = tmdbSeason.episodes.find(e => e.episode_number === episode);
                     if (tmdbEp && tmdbEp.name) {
                         episodeTitle = tmdbEp.name;
+                    } else {
+                        // Fallback melhorado para lista de episódios
+                        episodeTitle = `${seriesTitle} - Episódio ${episode}`;
                     }
+                } else {
+                    episodeTitle = `${seriesTitle} - Episódio ${episode}`;
                 }
                 
                 episodes.push({
