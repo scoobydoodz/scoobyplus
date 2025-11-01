@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Crossover</title>
+    <script src="data/scooby_doo_data.js"></script>
+</head>
+<body>
+    <h1>Debug dos Crossovers</h1>
+    <div id="debug-info"></div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const debugDiv = document.getElementById('debug-info');
+            
+            // Verifica se os dados estão carregados
+            if (typeof CONTENT_CATEGORIES !== 'undefined') {
+                const crossovers = CONTENT_CATEGORIES.crossovers.items;
+                
+                let html = '<h2>Dados dos Crossovers:</h2>';
+                
+                for (const [id, data] of Object.entries(crossovers)) {
+                    const videoUrl = data.dailymotion_videos['1_1'];
+                    const isGoogleDrive = videoUrl && videoUrl.includes('drive.google.com');
+                    
+                    html += `
+                        <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+                            <h3>${id}: ${data.title}</h3>
+                            <p><strong>URL:</strong> ${videoUrl}</p>
+                            <p><strong>É Google Drive:</strong> ${isGoogleDrive}</p>
+                            <p><strong>Tipo:</strong> ${typeof videoUrl}</p>
+                            <p><strong>Length:</strong> ${videoUrl ? videoUrl.length : 'N/A'}</p>
+                        </div>
+                    `;
+                }
+                
+                debugDiv.innerHTML = html;
+            } else {
+                debugDiv.innerHTML = '<p>Erro: CONTENT_CATEGORIES não carregado</p>';
+            }
+        });
+    </script>
+</body>
+</html>

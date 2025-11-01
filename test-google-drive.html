@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Google Drive Embed</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #1a1a1a; color: white; }
+        .test-container { margin: 20px 0; }
+        .player { width: 100%; height: 400px; background: #000; margin: 10px 0; }
+        .player iframe { width: 100%; height: 100%; }
+        button { padding: 10px 20px; margin: 5px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Teste de Embed do Google Drive</h1>
+    
+    <div class="test-container">
+        <h3>Teste 1: URL Original</h3>
+        <p>https://drive.google.com/file/d/1W7__vN0jdT3fmCggADQPXrh9e6EhYDyX/view?usp=drive_link</p>
+        <button onclick="testOriginal()">Testar URL Original</button>
+        <div id="player1" class="player">Clique no botão para testar</div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Teste 2: URL de Preview</h3>
+        <p>https://drive.google.com/file/d/1W7__vN0jdT3fmCggADQPXrh9e6EhYDyX/preview</p>
+        <button onclick="testPreview()">Testar URL Preview</button>
+        <div id="player2" class="player">Clique no botão para testar</div>
+    </div>
+    
+    <div class="test-container">
+        <h3>Teste 3: Segundo Vídeo</h3>
+        <p>https://drive.google.com/file/d/1MiXxpptBMo0E9iGxUgOdZY2RdH9totoB/preview</p>
+        <button onclick="testSecond()">Testar Segundo Vídeo</button>
+        <div id="player3" class="player">Clique no botão para testar</div>
+    </div>
+    
+    <script>
+        function testOriginal() {
+            const url = "https://drive.google.com/file/d/1W7__vN0jdT3fmCggADQPXrh9e6EhYDyX/view?usp=drive_link";
+            document.getElementById('player1').innerHTML = `
+                <iframe src="${url}" frameborder="0" allowfullscreen></iframe>
+            `;
+        }
+        
+        function testPreview() {
+            const url = "https://drive.google.com/file/d/1W7__vN0jdT3fmCggADQPXrh9e6EhYDyX/preview";
+            document.getElementById('player2').innerHTML = `
+                <iframe src="${url}" frameborder="0" allowfullscreen></iframe>
+            `;
+        }
+        
+        function testSecond() {
+            const url = "https://drive.google.com/file/d/1MiXxpptBMo0E9iGxUgOdZY2RdH9totoB/preview";
+            document.getElementById('player3').innerHTML = `
+                <iframe src="${url}" frameborder="0" allowfullscreen></iframe>
+            `;
+        }
+    </script>
+</body>
+</html>

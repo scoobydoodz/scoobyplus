@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Teste Filme</title>
+    <script src="data/scooby_doo_data.js"></script>
+</head>
+<body>
+    <h1>Teste de Filme</h1>
+    <p id="resultado">Carregando...</p>
+    
+    <script>
+        // Teste direto com ID 13151
+        const seriesId = "13151";
+        
+        // Busca o item em todas as categorias
+        let foundItem = null;
+        let foundCategory = null;
+        
+        for (const [categoryKey, categoryData] of Object.entries(CONTENT_CATEGORIES)) {
+            if (categoryData.items[seriesId]) {
+                foundItem = categoryData.items[seriesId];
+                foundCategory = categoryKey;
+                break;
+            }
+        }
+        
+        document.getElementById('resultado').innerHTML = `
+            <p>ID testado: ${seriesId}</p>
+            <p>Item encontrado: ${foundItem ? 'SIM' : 'NÃO'}</p>
+            <p>Categoria: ${foundCategory || 'Nenhuma'}</p>
+            <p>Vídeo disponível: ${foundItem && foundItem.dailymotion_videos ? 'SIM' : 'NÃO'}</p>
+        `;
+    </script>
+</body>
+</html>

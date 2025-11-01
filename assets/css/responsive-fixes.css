@@ -1,0 +1,157 @@
+/* responsive-fixes.css - Correções adicionais de responsividade e alinhamento */
+
+/* Garantir que todos os elementos sejam responsivos */
+* {
+    box-sizing: border-box;
+}
+
+/* Melhorar o comportamento de imagens */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Garantir que o conteúdo não vaze em telas pequenas */
+body {
+    overflow-x: hidden;
+}
+
+/* Melhorar o alinhamento de texto em dispositivos móveis */
+@media (max-width: 600px) {
+    h1, h2, h3, h4, h5, h6 {
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+    
+    p {
+        word-wrap: break-word;
+        hyphens: auto;
+    }
+}
+
+/* Garantir que os links sejam tocáveis em dispositivos móveis */
+@media (max-width: 900px) {
+    a, button {
+        min-height: 44px;
+        min-width: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .nav-link {
+        padding: 8px 12px;
+    }
+}
+
+/* Melhorar o espaçamento em dispositivos muito pequenos */
+@media (max-width: 320px) {
+    .main-header {
+        padding: 8px 10px;
+    }
+    
+    .content-catalog {
+        padding: 0 10px;
+    }
+    
+    .category-grid,
+    .series-catalog-grid-inner {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+    
+    .series-card img {
+        height: 200px;
+    }
+    
+    .banner-content h2 {
+        font-size: 1.5em;
+    }
+    
+    .hero-banner {
+        height: 30vh;
+    }
+}
+
+/* Garantir que o player seja sempre responsivo */
+.dailymotion-embed-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+/* Melhorar a acessibilidade em dispositivos móveis */
+@media (max-width: 900px) {
+    /* Aumentar o tamanho dos elementos interativos */
+    .carousel-nav,
+    .nav-button,
+    .banner-button {
+        touch-action: manipulation;
+    }
+    
+    /* Melhorar o contraste em telas pequenas */
+    .nav-link:hover,
+    .nav-link:focus {
+        background-color: rgba(255, 152, 0, 0.1);
+        border-radius: 4px;
+    }
+}
+
+/* Garantir que o scroll seja suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Melhorar a performance em dispositivos móveis */
+@media (max-width: 900px) {
+    .series-card,
+    .carousel-item {
+        will-change: transform;
+    }
+    
+    .series-card:hover {
+        transform: scale(1.02); /* Reduzir o scale em mobile */
+    }
+}
+
+/* Garantir que o footer seja sempre visível */
+footer {
+    margin-top: auto;
+}
+
+/* Melhorar o layout flex para dispositivos móveis */
+@media (max-width: 900px) {
+    .header-content,
+    .category-header {
+        align-items: stretch;
+    }
+}
+
+/* Garantir que os textos longos não quebrem o layout */
+.card-info h3,
+.about-description p,
+.episodes-list a {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+/* Melhorar a visibilidade dos elementos de foco */
+a:focus,
+button:focus {
+    outline: 2px solid var(--secondary-color);
+    outline-offset: 2px;
+}
+
+/* Garantir que os elementos não sejam muito pequenos em telas grandes */
+@media (min-width: 1600px) {
+    .content-catalog {
+        max-width: 1800px;
+    }
+    
+    .series-card img {
+        height: 400px;
+    }
+    
+    .carousel-item {
+        flex: 0 0 220px;
+    }
+}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Série - Scooby Plus</title>
+    
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../assets/css/season-page.css">
+    <link rel="stylesheet" href="../assets/css/responsive-fixes.css">
+    
+    <script src="../data/scooby_doo_data.js"></script>
+    <script src="../assets/js/series-index-logic.js" defer></script> 
+</head>
+<body>
+    <header class="main-header small-header">
+        <div class="header-content">
+            <a href="../index.html" style="text-decoration: none; color: inherit;">
+                <img src="../assets/img/scooby+.png" alt="Scooby Plus" class="logo">
+            </a>
+            <nav class="main-nav">
+                <a href="../index.html" class="nav-link">Home</a>
+                <a href="../categories/series.html" class="nav-link">Séries</a>
+                <a href="../categories/filmes-dvd.html" class="nav-link">Filmes DVD</a>
+                <a href="../categories/filmes-tv.html" class="nav-link">Filmes TV</a>
+                <a href="../categories/especiais-dvd.html" class="nav-link">Especiais DVD</a>
+                <a href="../categories/especiais-tv.html" class="nav-link">Especiais TV</a>
+                <a href="../categories/crossovers.html" class="nav-link">Crossovers</a>
+                <a href="../categories/live-action.html" class="nav-link">Live-Action</a>
+                <a href="../sobre.html" class="nav-link">Sobre</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="series-detail-container">
+        
+        <section class="series-hero-detail" id="series-hero-detail">
+            <div class="detail-content">
+                
+                <div id="poster-area" class="detail-poster">
+                    <p style="color: white;">Carregando Poster...</p>
+                </div>
+                
+                <div class="detail-info">
+                    <h2 id="series-title">Carregando Título...</h2>
+                    
+                    <div id="metadata" class="series-metadata">
+                        </div>
+                    
+                    <div id="play-button-area" class="play-button-area">
+                        <a href="#" class="banner-button disabled" id="continue-watching-btn">
+                            ▶ Assistir T1 E1
+                        </a>
+                    </div>
+                    
+                    <h3 class="sinopse-title">Sinopse</h3>
+                    <p id="series-overview">Carregando sinopse...</p>
+                </div>
+            </div>
+            <div class="hero-fade-detail"></div>
+        </section>
+
+        <section class="series-episodes-area">
+            <div id="seasons-selector" class="seasons-selector-buttons">
+                <h3>Episódios</h3>
+            </div>
+            
+            <ul id="episodes-list" class="episodes-list">
+                <li class="loading-item">Clique em uma temporada para carregar os episódios.</li>
+            </ul>
+        </section>
+        
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Scooby Plus | Conteúdo incorporado via Dailymotion | Dados via TMDB.</p>
+    </footer>
+</body>
+</html>
