@@ -47,17 +47,17 @@ function getContentType(categoryKey) {
 }
 
 // Função para criar card de conteúdo
-function createContentCard(id, data, releaseYear = null) {
+function createContentCard(id, data) {
     const posterPath = data.poster_path ? `https://image.tmdb.org/t/p/w342${data.poster_path}` : 'https://via.placeholder.com/342x513/1e1e1e/FFFFFF?text=SEM+CAPA';
     
     const title = data.name || data.title || 'Título não disponível';
     const releaseDate = data.first_air_date || data.release_date;
-    const year = releaseYear || (releaseDate ? sanitizeHtml(releaseDate.substring(0, 4)) : 'N/A');
+    const year = releaseDate ? sanitizeHtml(releaseDate.substring(0, 4)) : 'N/A';
     
     const card = document.createElement('a');
     card.href = `../series/series-page.html?series=${encodeURIComponent(id)}`;
     card.className = 'series-card';
-    card.dataset.releaseYear = releaseYear || (releaseDate ? releaseDate.substring(0, 4) : '9999');
+    card.dataset.releaseYear = parseInt(releaseDate ? releaseDate.substring(0, 4) : '9999');
     card.innerHTML = `
         <img src="${posterPath}" alt="${sanitizeHtml(title)}">
         <div class="card-info">
@@ -84,7 +84,7 @@ function createManualCard(id, itemData) {
     const targetPage = (id.startsWith('cross') || id.startsWith('dvd') || id.startsWith('tv')) ? 'player.html' : 'series-page.html';
     card.href = `../series/${targetPage}?series=${encodeURIComponent(id)}`;
     card.className = 'series-card';
-    card.dataset.releaseYear = itemData.release_year || itemData.year || '9999';
+    card.dataset.releaseYear = parseInt(itemData.release_year || itemData.year || 9999);
     card.innerHTML = `
         <img src="${posterPath}" alt="${sanitizeHtml(title)}">
         <div class="card-info">
@@ -146,12 +146,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const fragment = document.createDocumentFragment();
         
-        // Ordena todos os itens por data de lançamento
+        // Ordena todos os itens por data de lançamento (ano crescente)
         const sortedItemIds = itemIds.sort((a, b) => {
             const itemA = categoryData.items[a];
             const itemB = categoryData.items[b];
-            const yearA = itemA.release_year || itemA.year || 9999;
-            const yearB = itemB.release_year || itemB.year || 9999;
+            const yearA = parseInt(itemA.release_year || itemA.year || 9999);
+            const yearB = parseInt(itemB.release_year || itemB.year || 9999);
             return yearA - yearB;
         });
         
@@ -174,18 +174,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 return id.startsWith('cross') || id.startsWith('dvd') || id.startsWith('tv') || (!isNaN(numId) && numId >= 900000);
             });
             
-            // Busca dados TMDB
+            // Busca dados TMDB e ordena por ano
             if (tmdbIds.length > 0) {
                 const itemPromises = tmdbIds.map(id => fetchTmdbData(`${contentType}/${id}`));
                 const itemDataArray = await Promise.all(itemPromises);
                 
-                itemDataArray.forEach((data, index) => {
-                    if (data) {
-                        const id = tmdbIds[index];
-                        const itemData = categoryData.items[id];
-                        const releaseYear = itemData?.release_year;
-                        fragment.appendChild(createContentCard(id, data, releaseYear));
-                    }
+                // Cria array com dados e ordena por ano de lançamento
+                const tmdbItems = itemDataArray
+                    .map((data, index) => ({ data, id: tmdbIds[index] }))
+                    .filter(item => item.data)
+                    .sort((a, b) => {
+                        const yearA = parseInt((a.data.release_date || a.data.first_air_date || '9999').substring(0, 4));
+                        const yearB = parseInt((b.data.release_date || b.data.first_air_date || '9999').substring(0, 4));
+                        return yearA - yearB;
+                    });
+                
+                tmdbItems.forEach(({ data, id }) => {
+                    fragment.appendChild(createContentCard(id, data));
                 });
             }
             

@@ -247,6 +247,21 @@ const CONTENT_CATEGORIES = {
             "1069": {
                 short_id: "scooby_13_fantasmas",
                 release_year: 1985,
+                episodes: {
+                    "1_1": { title: "Para Todos os Fantasmas que Amei Antes"},
+                    "1_2": { title: "Aquela Noite Quando os Fantasmas Saíram"},
+                    "1_3": { title: "O Fantasma de Hambridge"},
+                    "1_4": { title: "Quando Você Deseja um Fantasma"},
+                    "1_5": { title: "Assombrado pelo Passado"},
+                    "1_6": { title: "Navio Fantasma"},
+                    "1_7": { title: "Eu Deixei Meu Coração em um Castelo Assombrado"},
+                    "1_8": { title: "O Fantasma de Moonscar Island"},
+                    "1_9": { title: "Assombração no Espaço"},
+                    "1_10": { title: "O Fantasma de Ferro"},
+                    "1_11": { title: "O Fantasma de Wickles"},
+                    "1_12": { title: "Assombração no Circo"},
+                    "1_13": { title: "Assombração Final" }
+                },
                 dailymotion_videos: {
                     "1_1": "k1HWd6fkMssjemCGzvu",
                     "1_2": "k2aEkKfXgB2Q0HCP5m2",

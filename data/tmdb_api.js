@@ -1,5 +1,7 @@
 const TMDB_API_KEY = 'YOUR_API_KEY_HERE';
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w342';
+const TMDB_BACKDROP_BASE = 'https://image.tmdb.org/t/p/w1280';
 
 const movieMappings = {
     "16390": { short_id: "filme_samurai", dailymotion_videos: { "1_1": "k3wQCEqZUkszzlCGAtG" } },

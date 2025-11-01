@@ -1,4 +1,4 @@
-// assets/js/player-logic.js - Versão Simplificada
+// assets/js/player-logic.js - Versão com TMDB
 
 function sanitizeHtml(str) {
     if (!str) return '';
@@ -7,7 +7,35 @@ function sanitizeHtml(str) {
     return div.innerHTML;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+async function fetchTmdbEpisode(seriesId, season, episode) {
+    const isValidTmdbId = !isNaN(Number(seriesId)) && Number(seriesId) < 900000;
+    if (!isValidTmdbId) return null;
+    
+    try {
+        const response = await fetch(`${TMDB_BASE_URL}/tv/${seriesId}/season/${season}/episode/${episode}?api_key=${TMDB_API_KEY}&language=pt-BR`);
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.error('Erro ao buscar episódio TMDB:', error);
+        return null;
+    }
+}
+
+async function fetchTmdbSeason(seriesId, season) {
+    const isValidTmdbId = !isNaN(Number(seriesId)) && Number(seriesId) < 900000;
+    if (!isValidTmdbId) return null;
+    
+    try {
+        const response = await fetch(`${TMDB_BASE_URL}/tv/${seriesId}/season/${season}?api_key=${TMDB_API_KEY}&language=pt-BR`);
+        if (!response.ok) return null;
+        return await response.json();
+    } catch (error) {
+        console.error('Erro ao buscar temporada TMDB:', error);
+        return null;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const seriesId = urlParams.get('series');
     const currentSeason = parseInt(urlParams.get('t')) || 1;
@@ -42,6 +70,12 @@ document.addEventListener('DOMContentLoaded', () => {
         episodeTitle = seriesData.episodes[episodeKey].title;
     } else if (seriesData.dailymotion_videos) {
         videoUrl = seriesData.dailymotion_videos[episodeKey];
+        
+        // Busca título do TMDB se não tiver título específico
+        const tmdbEpisode = await fetchTmdbEpisode(seriesId, currentSeason, currentEpisode);
+        if (tmdbEpisode && tmdbEpisode.name) {
+            episodeTitle = tmdbEpisode.name;
+        }
     }
     
     if (!videoUrl) {
@@ -105,13 +139,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     } else {
+        // Busca dados da temporada do TMDB para obter títulos
+        const tmdbSeason = await fetchTmdbSeason(seriesId, currentSeason);
+        
         Object.keys(seriesData.dailymotion_videos).forEach(key => {
             const [season, episode] = key.split('_').map(Number);
             if (season === currentSeason && episode > 0) {
+                let episodeTitle = `Episódio ${episode}`;
+                
+                // Usa título do TMDB se disponível
+                if (tmdbSeason && tmdbSeason.episodes) {
+                    const tmdbEp = tmdbSeason.episodes.find(e => e.episode_number === episode);
+                    if (tmdbEp && tmdbEp.name) {
+                        episodeTitle = tmdbEp.name;
+                    }
+                }
+                
                 episodes.push({
                     number: episode,
                     key: key,
-                    title: `Episódio ${episode}`,
+                    title: episodeTitle,
                     videoId: seriesData.dailymotion_videos[key]
                 });
             }
@@ -161,6 +208,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const value = JSON.stringify({ t: currentSeason, e: currentEpisode });
     localStorage.setItem(key, value);
     
+    // Sistema de detecção de fim de vídeo
+    setupVideoEndDetection(seriesId, currentSeason, currentEpisode, maxEpisode);
+    
     // Botão de fullscreen customizado
     const fullscreenBtn = document.getElementById('fullscreen-btn');
     if (fullscreenBtn) {
@@ -196,4 +246,107 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+// Função para detectar fim do vídeo e remover da lista "Continuar Assistindo"
+function setupVideoEndDetection(seriesId, currentSeason, currentEpisode, maxEpisode) {
+    const iframe = document.querySelector('#dailymotion-player iframe');
+    if (!iframe) return;
+    
+    // Para Google Drive
+    if (iframe.src.includes('drive.google.com')) {
+        // Detecta inatividade prolongada (assumindo que terminou)
+        let lastActivity = Date.now();
+        let checkInterval;
+        
+        const resetActivity = () => {
+            lastActivity = Date.now();
+        };
+        
+        // Monitora atividade do usuário
+        ['click', 'keydown', 'mousemove', 'touchstart'].forEach(event => {
+            document.addEventListener(event, resetActivity);
+        });
+        
+        checkInterval = setInterval(() => {
+            const inactiveTime = Date.now() - lastActivity;
+            // Se inativo por mais de 30 segundos, considera como terminado
+            if (inactiveTime > 30000) {
+                clearInterval(checkInterval);
+                handleVideoEnd(seriesId, currentSeason, currentEpisode, maxEpisode);
+            }
+        }, 5000);
+        
+        // Limpa interval ao sair da página
+        window.addEventListener('beforeunload', () => {
+            clearInterval(checkInterval);
+        });
+    }
+    
+    // Para Dailymotion - usa postMessage API
+    else if (iframe.src.includes('dailymotion.com')) {
+        window.addEventListener('message', (event) => {
+            if (event.origin !== 'https://www.dailymotion.com') return;
+            
+            try {
+                const data = JSON.parse(event.data);
+                if (data.type === 'video_end' || 
+                    (data.type === 'video_progress' && data.progress >= 0.95)) {
+                    handleVideoEnd(seriesId, currentSeason, currentEpisode, maxEpisode);
+                }
+            } catch (e) {
+                // Ignora erros de parsing
+            }
+        });
+    }
+}
+
+// Função para identificar se é filme ou série
+function isMovie(categoryKey) {
+    return ['filmes_animados_dvd', 'filmes_animados_tv', 'especiais_dvd', 'especiais_tv', 'crossovers', 'live_action'].includes(categoryKey);
+}
+
+// Função para obter tipo específico do conteúdo
+function getContentTypeLabel(categoryKey) {
+    switch(categoryKey) {
+        case 'especiais_dvd': return 'Especial DVD';
+        case 'especiais_tv': return 'Especial TV';
+        case 'crossovers': return 'Crossover';
+        case 'live_action': return 'Live-Action';
+        case 'filmes_animados_dvd':
+        case 'filmes_animados_tv': return 'Filme';
+        default: return 'Filme';
+    }
+}
+
+// Função para lidar com o fim do vídeo
+function handleVideoEnd(seriesId, currentSeason, currentEpisode, maxEpisode) {
+    const key = `lastWatched_${seriesId}`;
+    
+    // Verifica se é filme
+    let isMovieContent = false;
+    for (const [categoryKey, categoryData] of Object.entries(CONTENT_CATEGORIES)) {
+        if (categoryData.items[seriesId]) {
+            isMovieContent = isMovie(categoryKey);
+            break;
+        }
+    }
+    
+    // Se é filme, sempre remove da lista
+    if (isMovieContent) {
+        localStorage.removeItem(key);
+        console.log(`Filme ${seriesId} removido de "Continuar Assistindo" - filme concluído`);
+    }
+    // Se é série e último episódio da temporada, remove da lista
+    else if (currentEpisode >= maxEpisode) {
+        localStorage.removeItem(key);
+        console.log(`Série ${seriesId} removida de "Continuar Assistindo" - temporada concluída`);
+    }
+    // Caso contrário, atualiza para o próximo episódio
+    else {
+        const nextEpisode = currentEpisode + 1;
+        const value = JSON.stringify({ t: currentSeason, e: nextEpisode });
+        localStorage.setItem(key, value);
+        console.log(`Progresso atualizado para T${currentSeason} E${nextEpisode}`);
+    }
+}
 

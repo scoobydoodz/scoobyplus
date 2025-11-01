@@ -213,6 +213,24 @@ function updateCarouselButtons(categoryKey) {
     nextBtn.disabled = currentScroll >= maxScroll;
 }
 
+// Função para identificar se é filme ou série
+function isMovie(categoryKey) {
+    return ['filmes_animados_dvd', 'filmes_animados_tv', 'especiais_dvd', 'especiais_tv', 'crossovers', 'live_action'].includes(categoryKey);
+}
+
+// Função para obter tipo específico do conteúdo
+function getContentTypeLabel(categoryKey) {
+    switch(categoryKey) {
+        case 'especiais_dvd': return 'Especial DVD';
+        case 'especiais_tv': return 'Especial TV';
+        case 'crossovers': return 'Crossover';
+        case 'live_action': return 'Live-Action';
+        case 'filmes_animados_dvd':
+        case 'filmes_animados_tv': return 'Filme';
+        default: return 'Filme';
+    }
+}
+
 // Função para criar seção "Continuar Assistindo"
 async function createContinueWatchingSection() {
     const continueItems = [];
@@ -228,30 +246,57 @@ async function createContinueWatchingSection() {
             for (const [categoryKey, categoryData] of Object.entries(CONTENT_CATEGORIES)) {
                 if (categoryData.items[seriesId]) {
                     const seriesData = categoryData.items[seriesId];
+                    const isMovieContent = isMovie(categoryKey);
                     
-                    // Busca poster do TMDB se for ID válido
+                    // Busca dados do TMDB para título e poster
+                    let title = seriesData.title || 'Título não disponível';
                     let posterUrl = seriesData.poster_path || 'https://via.placeholder.com/342x513/1e1e1e/FFFFFF?text=SEM+CAPA';
+                    let episodeTitle = isMovieContent ? getContentTypeLabel(categoryKey) : `T${progress.t || 1} E${progress.e || 1}`;
+                    
                     const isValidTmdbId = !isNaN(Number(seriesId)) && Number(seriesId) < 900000;
                     
-                    if (isValidTmdbId && !seriesData.poster_path) {
+                    if (isValidTmdbId) {
                         try {
                             const contentType = categoryKey === 'series' ? 'tv' : 'movie';
                             const tmdbData = await fetchTmdbData(`${contentType}/${seriesId}`);
-                            if (tmdbData && tmdbData.poster_path) {
-                                posterUrl = `https://image.tmdb.org/t/p/w342${tmdbData.poster_path}`;
+                            
+                            if (tmdbData) {
+                                // Usa título do TMDB se não houver local
+                                if (!seriesData.title) {
+                                    title = tmdbData.name || tmdbData.title || title;
+                                }
+                                
+                                // Usa poster do TMDB se não houver local
+                                if (!seriesData.poster_path && tmdbData.poster_path) {
+                                    posterUrl = `https://image.tmdb.org/t/p/w342${tmdbData.poster_path}`;
+                                }
+                                
+                                // Para séries, busca título do episódio
+                                if (!isMovieContent && progress.t && progress.e) {
+                                    try {
+                                        const episodeData = await fetchTmdbData(`tv/${seriesId}/season/${progress.t}/episode/${progress.e}`);
+                                        if (episodeData && episodeData.name) {
+                                            episodeTitle = episodeData.name;
+                                        }
+                                    } catch (error) {
+                                        console.log('Erro ao buscar episódio TMDB:', error);
+                                    }
+                                }
                             }
                         } catch (error) {
-                            console.log('Erro ao buscar poster TMDB:', error);
+                            console.log('Erro ao buscar dados TMDB:', error);
                         }
                     }
                     
                     continueItems.push({
                         id: seriesId,
-                        title: seriesData.title || 'Título não disponível',
+                        title: title,
                         poster: posterUrl,
                         season: progress.t || 1,
                         episode: progress.e || 1,
-                        category: categoryKey
+                        episodeTitle: episodeTitle,
+                        category: categoryKey,
+                        isMovie: isMovieContent
                     });
                     break;
                 }
@@ -275,15 +320,18 @@ async function createContinueWatchingSection() {
     continueItems.slice(0, 6).forEach(item => {
         const card = document.createElement('a');
         card.className = 'continue-card';
-        card.href = item.category === 'series' 
-            ? `series/player.html?series=${item.id}&t=${item.season}&e=${item.episode}`
-            : `series/series-page.html?series=${item.id}`;
+        card.href = item.isMovie 
+            ? `series/series-page.html?series=${item.id}`
+            : `series/player.html?series=${item.id}&t=${item.season}&e=${item.episode}`;
+        
+        const displayTitle = item.title.length > 25 ? item.title.substring(0, 22) + '...' : item.title;
+        const displayEpisode = item.episodeTitle.length > 30 ? item.episodeTitle.substring(0, 27) + '...' : item.episodeTitle;
         
         card.innerHTML = `
             <img src="${item.poster}" alt="${item.title}">
             <div class="continue-info">
-                <h4>${item.title}</h4>
-                <p>T${item.season} E${item.episode}</p>
+                <h4 title="${item.title}">${displayTitle}</h4>
+                <p title="${item.episodeTitle}">${displayEpisode}</p>
             </div>
         `;
         

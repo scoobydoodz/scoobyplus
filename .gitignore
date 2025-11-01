@@ -1,0 +1,14 @@
+# Arquivos de teste
+test-*.html
+*-test.html
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db

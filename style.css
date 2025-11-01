@@ -490,6 +490,28 @@ body {
         grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
+    
+    .continue-watching-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .continue-card img {
+        height: 80px;
+    }
+    
+    .continue-info {
+        padding: 5px 6px 6px;
+    }
+    
+    .continue-info h4 {
+        font-size: 0.75em;
+        margin-bottom: 2px;
+    }
+    
+    .continue-info p {
+        font-size: 0.65em;
+    }
 }
 
 /* CARDS DAS SÉRIES - Foco na Capa */
@@ -858,10 +880,10 @@ body {
 /* CONTINUAR ASSISTINDO */
 .continue-watching-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
     margin-top: 10px;
-    max-width: 1200px;
+    max-width: 1400px;
 }
 
 .continue-card {
@@ -872,72 +894,61 @@ body {
     border-radius: 8px;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .continue-card:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
     box-shadow: var(--card-shadow);
+    border-color: var(--secondary-color);
 }
 
 .continue-card img {
     width: 100%;
-    height: 150px;
+    height: 120px;
     object-fit: cover;
+    object-position: center top;
 }
 
 .continue-info {
-    padding: 12px;
+    padding: 10px 12px 12px;
 }
 
 .continue-info h4 {
-    font-size: 1em;
-    margin-bottom: 6px;
+    font-size: 0.9em;
+    margin-bottom: 4px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     font-weight: 600;
+    line-height: 1.3;
 }
 
 .continue-info p {
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: var(--secondary-color);
     margin: 0;
     font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.2;
 }
 
 @media (max-width: 1200px) {
     .continue-watching-grid {
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
     }
     
     .continue-card img {
-        height: 135px;
+        height: 110px;
     }
 }
 
 @media (max-width: 900px) {
     .continue-watching-grid {
-        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-        gap: 15px;
-    }
-    
-    .continue-card img {
-        height: 120px;
-    }
-    
-    .continue-info {
-        padding: 10px;
-    }
-    
-    .continue-info h4 {
-        font-size: 0.9em;
-    }
-}
-
-@media (max-width: 600px) {
-    .continue-watching-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 10px;
     }
     
@@ -946,7 +957,7 @@ body {
     }
     
     .continue-info {
-        padding: 8px;
+        padding: 8px 10px 10px;
     }
     
     .continue-info h4 {
@@ -955,6 +966,29 @@ body {
     
     .continue-info p {
         font-size: 0.75em;
+    }
+}
+
+@media (max-width: 600px) {
+    .continue-watching-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    
+    .continue-card img {
+        height: 90px;
+    }
+    
+    .continue-info {
+        padding: 6px 8px 8px;
+    }
+    
+    .continue-info h4 {
+        font-size: 0.8em;
+    }
+    
+    .continue-info p {
+        font-size: 0.7em;
     }
 }
 
