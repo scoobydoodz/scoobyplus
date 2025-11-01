@@ -148,16 +148,43 @@
 .dailymotion-embed-wrapper iframe:-webkit-full-screen {
     width: 100% !important;
     height: 100% !important;
+    object-fit: contain;
 }
 
 .dailymotion-embed-wrapper iframe:-moz-full-screen {
     width: 100% !important;
     height: 100% !important;
+    object-fit: contain;
 }
 
 .dailymotion-embed-wrapper iframe:fullscreen {
     width: 100% !important;
     height: 100% !important;
+    object-fit: contain;
+}
+
+/* Garantir que o iframe tenha controles de fullscreen visíveis */
+.dailymotion-embed-wrapper iframe {
+    z-index: 1;
+}
+
+/* Permitir que o wrapper também entre em fullscreen */
+.dailymotion-embed-wrapper:-webkit-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #000;
+}
+
+.dailymotion-embed-wrapper:-moz-full-screen {
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #000;
+}
+
+.dailymotion-embed-wrapper:fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    background: #000;
 }
 
 .video-controls {

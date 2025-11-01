@@ -60,9 +60,27 @@ document.addEventListener('DOMContentLoaded', () => {
     if (videoUrl.startsWith('gdrive:')) {
         const fileId = videoUrl.replace('gdrive:', '');
         const embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
-        playerHtml = `<iframe frameborder="0" width="100%" height="100%" src="${embedUrl}" allowfullscreen></iframe>`;
+        playerHtml = `<iframe 
+            frameborder="0" 
+            width="100%" 
+            height="100%" 
+            src="${embedUrl}" 
+            allowfullscreen 
+            webkitallowfullscreen 
+            mozallowfullscreen 
+            allow="fullscreen; picture-in-picture">
+        </iframe>`;
     } else {
-        playerHtml = `<iframe frameborder="0" width="100%" height="100%" src="https://www.dailymotion.com/embed/video/${videoUrl}?autoplay=1&info=0&logo=0&ui-highlight=%23ff9800&mute=0&ui-components=controls&quality=1080&fullscreen=1" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" allow="autoplay; fullscreen; picture-in-picture; web-share; accelerometer; gyroscope"></iframe>`;
+        playerHtml = `<iframe 
+            frameborder="0" 
+            width="100%" 
+            height="100%" 
+            src="https://www.dailymotion.com/embed/video/${videoUrl}?autoplay=1&ui-components=controls&fullscreen=1" 
+            allowfullscreen 
+            webkitallowfullscreen 
+            mozallowfullscreen 
+            allow="autoplay; fullscreen; picture-in-picture">
+        </iframe>`;
     }
     document.getElementById('dailymotion-player').innerHTML = playerHtml;
     
@@ -142,4 +160,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const key = `lastWatched_${seriesId}`;
     const value = JSON.stringify({ t: currentSeason, e: currentEpisode });
     localStorage.setItem(key, value);
+    
+    // Garantir que o fullscreen funcione
+    setTimeout(() => {
+        const iframe = document.querySelector('#dailymotion-player iframe');
+        if (iframe) {
+            // Força os atributos de fullscreen
+            iframe.setAttribute('allowfullscreen', 'true');
+            iframe.setAttribute('webkitallowfullscreen', 'true');
+            iframe.setAttribute('mozallowfullscreen', 'true');
+            
+            // Adiciona event listener para fullscreen
+            iframe.addEventListener('load', () => {
+                console.log('Player carregado - Fullscreen habilitado');
+            });
+        }
+    }, 1000);
 });
+
+// Função para testar fullscreen manualmente
+function testFullscreen() {
+    const iframe = document.querySelector('#dailymotion-player iframe');
+    if (iframe && iframe.requestFullscreen) {
+        iframe.requestFullscreen();
+    } else if (iframe && iframe.webkitRequestFullscreen) {
+        iframe.webkitRequestFullscreen();
+    } else if (iframe && iframe.mozRequestFullScreen) {
+        iframe.mozRequestFullScreen();
+    }
+}
+
+// Adiciona botão de teste (apenas para debug)
+if (window.location.search.includes('debug=1')) {
+    setTimeout(() => {
+        const testBtn = document.createElement('button');
+        testBtn.textContent = 'Teste Fullscreen';
+        testBtn.style.cssText = 'position:fixed;top:10px;right:10px;z-index:9999;padding:10px;background:#ff9800;color:#000;border:none;border-radius:4px;cursor:pointer;';
+        testBtn.onclick = testFullscreen;
+        document.body.appendChild(testBtn);
+    }, 2000);
+}

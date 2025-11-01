@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Fullscreen - Scooby Plus</title>
+    <style>
+        body {
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            background: #000;
+            border-radius: 8px;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .test-info {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #333;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-info">
+        <h1>Teste de Fullscreen - Dailymotion</h1>
+        <p>Este é um teste para verificar se o botão de fullscreen aparece no player do Dailymotion.</p>
+        <p><strong>O que verificar:</strong></p>
+        <ul>
+            <li>Se o botão de fullscreen aparece nos controles do player</li>
+            <li>Se o botão funciona quando clicado</li>
+            <li>Se o vídeo entra em tela cheia corretamente</li>
+        </ul>
+    </div>
+
+    <div class="video-container">
+        <iframe 
+            src="https://www.dailymotion.com/embed/video/k2FNmrcuJtYbZ6CMA46?autoplay=0&info=0&logo=0&ui-highlight=%23ff9800&mute=0&ui-components=controls,fullscreen&quality=1080" 
+            allowfullscreen 
+            webkitallowfullscreen 
+            mozallowfullscreen 
+            allow="autoplay; fullscreen; picture-in-picture; web-share; accelerometer; gyroscope">
+        </iframe>
+    </div>
+
+    <div class="test-info">
+        <h2>Teste com Google Drive</h2>
+        <p>Testando também um vídeo do Google Drive:</p>
+    </div>
+
+    <div class="video-container">
+        <iframe 
+            src="https://drive.google.com/file/d/1R98SEGp8BF_ZaP--qR3RLWja-4EyoS1q/preview" 
+            allowfullscreen 
+            webkitallowfullscreen 
+            mozallowfullscreen 
+            allow="fullscreen; picture-in-picture">
+        </iframe>
+    </div>
+
+    <div class="test-info">
+        <p><strong>Nota:</strong> Se o botão de fullscreen não aparecer, pode ser devido a:</p>
+        <ul>
+            <li>Configurações do navegador</li>
+            <li>Políticas de segurança do site</li>
+            <li>Configurações do Dailymotion</li>
+        </ul>
+        <p><a href="series/player.html?series=13351&t=1&e=1" style="color: #ff9800;">← Voltar ao player normal</a></p>
+    </div>
+</body>
+</html>
