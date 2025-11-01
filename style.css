@@ -42,8 +42,10 @@ body {
 
 .logo {
     height: 60px;
+    width: auto;
     cursor: pointer;
     transition: transform 0.3s;
+    object-fit: contain;
 }
 
 .logo:hover {
@@ -110,6 +112,8 @@ body {
     
     .logo {
         height: 45px;
+        width: auto;
+        max-width: 150px;
     }
     
     .main-nav {
