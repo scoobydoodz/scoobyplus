@@ -666,6 +666,118 @@ body {
     border-radius: 8px;
 }
 
+/* --- ESTILOS PARA O PLAYER DE FILME E BOTÃO DE TELA CHEIA --- */
+
+/* 1. Contêiner do Player (onde o vídeo e o botão ficam) */
+#player-wrapper {
+  position: relative; /* ESSENCIAL: Permite posicionar o botão dentro dele */
+  background-color: #000; /* Fundo preto para o player */
+  overflow: hidden; /* Garante que nada vaze para fora */
+  height: 500px; /* Define a altura padrão do player */
+  width: 100%; /* Ocupa toda a largura disponível */
+}
+
+/* 2. O Iframe do Vídeo (dentro do contêiner) */
+#player-wrapper iframe {
+  position: absolute; /* Posiciona o iframe para preencher o contêiner */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none; /* Remove qualquer borda padrão do iframe */
+}
+
+/* 3. O Botão de Tela Cheia */
+.player-fullscreen-btn {
+  /* Posicionamento */
+  position: absolute; /* Posiciona o botão sobre o iframe */
+  bottom: 15px;       /* 15px da borda inferior */
+  right: 15px;        /* 15px da borda direita */
+  z-index: 10;        /* CRÍTICO: Coloca o botão em uma camada ACIMA do iframe */
+
+  /* Aparência */
+  background-color: rgba(30, 30, 30, 0.7); /* Fundo escuro semi-transparente */
+  border: none;       /* Sem borda */
+  border-radius: 6px; /* Cantos arredondados */
+  width: 40px;        /* Largura do botão */
+  height: 40px;       /* Altura do botão */
+  padding: 8px;       /* Espaçamento interno para o ícone */
+  cursor: pointer;    /* Indica que é clicável */
+  display: flex;      /* Usa flexbox para centralizar o ícone */
+  align-items: center;
+  justify-content: center;
+  
+  /* Transição suave para o hover */
+  transition: background-color 0.2s ease;
+}
+
+/* 4. Efeito ao passar o mouse sobre o botão */
+.player-fullscreen-btn:hover {
+  background-color: rgba(50, 50, 50, 0.9); /* Fica um pouco mais opaco */
+}
+
+/* 5. O Ícone SVG dentro do botão */
+.player-fullscreen-btn svg {
+  width: 100%;        /* O ícone ocupa 100% da largura do botão */
+  height: 100%;       /* O ícone ocupa 100% da altura do botão */
+  fill: #ffffff;      /* Cor do ícone: BRANCO */
+}
+
+/* 6. Estilos para quando o player estiver em MODO TELA CHEIA */
+#player-wrapper:fullscreen,
+#player-wrapper:-webkit-full-screen, /* Para navegadores Webkit (Chrome, Safari) */
+#player-wrapper:-moz-full-screen {   /* Para Firefox */
+  width: 100%; /* Ocupa 100% da largura da tela */
+  height: 100%; /* Ocupa 100% da altura da tela */
+}
+
+/* --- ESTILOS PARA A LISTA DE EPISÓDIOS --- */
+
+/* Garante que o item da lista seja a referência para o botão */
+#episodes-list li a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-right: 60px; /* Abre espaço para o botão de play */
+}
+
+/* Botão de Play para cada episódio */
+.episode-play-btn {
+    /* Posicionamento */
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    /* Aparência */
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%; /* Círculo */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    /* Transição */
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Efeito ao passar o mouse sobre o item da lista */
+#episodes-list li a:hover .episode-play-btn {
+    background-color: var(--secondary-color); /* Laranja */
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Ícone SVG dentro do botão */
+.episode-play-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+    margin-left: 3px; /* Ajuste fino para centralizar o ícone de play */
+}
+
+
+
 @media (max-width: 1200px) {
     .movie-player-section .dailymotion-embed-wrapper {
         height: 450px;

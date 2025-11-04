@@ -88,8 +88,10 @@ function renderHeroBanner(data) {
 // Função para criar card de conteúdo (séries e filmes)
 function createContentCard(id, data) {
     // Verifica se é URL completa ou caminho do TMDB
-    const posterPath = data.poster_path 
-        ? (data.poster_path.startsWith('http') ? data.poster_path : `https://image.tmdb.org/t/p/w342${data.poster_path}`)
+    const posterPath = data.poster_path
+        ? (data.poster_path.startsWith('http') || data.poster_path.startsWith('/assets/img/'))
+            ? data.poster_path.substring(1) // Remove the leading slash
+            : `https://image.tmdb.org/t/p/w342${data.poster_path}`
         : 'https://via.placeholder.com/342x513/1e1e1e/FFFFFF?text=SEM+CAPA';
     
     // Nome: 'name' para séries, 'title' para filmes
