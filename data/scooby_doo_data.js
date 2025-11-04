@@ -940,7 +940,7 @@ const CONTENT_CATEGORIES = {
         title: "A Noite dos Doos Vivos",
         overview: "Uma noite assombrada com múltiplos Scooby-Doos.",
         year: "2001",
-        poster_path: "/assets/img/NoiteDosDoosVivos.jpg",
+        poster_path: "/assets/img/NoitedosDoosVivos.jpg",
         dailymotion_videos: {
           "1_1": "gdrive:1XM4VdMTwlyi-1eQNF6bwc5W3hJgEsdbB",
         },
