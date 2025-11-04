@@ -999,7 +999,7 @@ const CONTENT_CATEGORIES = {
           "Crossover entre Scooby-Doo e Sobrenatural. Os irmãos Winchester encontram a turma do Scooby-Doo em uma aventura sobrenatural.",
         year: "2018",
         series: "Sobrenatural",
-        poster_path: "/assets/img/Scoobynatural.jpg",
+        poster_path: "/assets/img/ScoobyNatural.jpg",
         dailymotion_videos: { "1_1": "k6gJjPqEh3mJzKCIlyI" },
       },
       cross005: {
